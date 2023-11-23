@@ -27,15 +27,29 @@ public class MultitrustsslbundleApplication {
 	@Bean
 	public CommandLineRunner server1CLR (SslBundles sslBundles, RestTemplateBuilder restTemplateBuilder) {
 	    return (args) -> {
-			SslBundle javaSslBundle = sslBundles.getBundle(JavaTrustManagerSslBundleRegister.JAVA_CACERTS_BUNDLE_NAME);
+
+			// Note: We are using a single RestTemplate to access and trust three different servers with each
+			// having their own certificate
+			RestTemplate restTemplate = restTemplateBuilder.build();
+
+			// Ideally a single composite SslBundle should do the below compositing
+			// of trust material
+			// See: https://github.com/spring-projects/spring-boot/issues/38387
+			// BLOCK
 			List<TrustManager> trustManagers = new LinkedList<>();
 
+			// SslBundle representing that wraps server1-truststore.jks
+			// and trusts the server server1:8081's certificate
 			trustManagers.addAll(Arrays.asList(sslBundles.getBundle("server1")
 					.getManagers().getTrustManagers()));
 
+			// SslBundle representing that wraps server2-truststore.jks
+			// and trusts the server server2:8082's certificate
 			trustManagers.addAll(Arrays.asList(sslBundles.getBundle("server2")
 					.getManagers().getTrustManagers()));
 
+			// SslBundle representing JDK's trust store
+			// and trusts any public signed certificates signed by CA Authorities
 			trustManagers.addAll(Arrays.asList(sslBundles.getBundle(JavaTrustManagerSslBundleRegister.JAVA_CACERTS_BUNDLE_NAME)
 					.getManagers().getTrustManagers()));
 
@@ -55,8 +69,11 @@ public class MultitrustsslbundleApplication {
 
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 			requestFactory.setHttpClient(closeableHttpClient);
-			RestTemplate restTemplate = restTemplateBuilder.build();
+
 			restTemplate.setRequestFactory(requestFactory);
+			// END BLOCK
+
+
 
 			try {
 				System.out.println("Trying https://server1:8081");
