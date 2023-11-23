@@ -1,6 +1,6 @@
 # Description
 
-A simple Spring Boot App to show use of a composite TrustManager built from SsslBundle with RestTemplate.
+A simple Spring Boot App to show use of a composite TrustManager built from SsslBundle with RestTemplate and new RestClient as well.
 
 It uses two trust stores 
 
@@ -22,8 +22,6 @@ It also registers third SslBundle named `JAVA_CACERTS_BUNDLE` that wraps Java's 
 This is used to trust public API which uses signed certificate. 
 
 - https://jsonplaceholder.typicode.com/todos/1
-
-
 
 ### Reference Documentation
 For further reference, please consider the following sections:
