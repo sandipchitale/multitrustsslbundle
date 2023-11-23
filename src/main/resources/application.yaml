@@ -1,0 +1,20 @@
+spring:
+  main:
+    banner-mode: off
+    web-application-type: none
+  ssl:
+    bundle:
+      jks:
+        server1:
+          truststore:
+            type: JKS
+            location: classpath:server1-truststore.jks
+            password: abcdefg
+        server2:
+          truststore:
+            type: JKS
+            location: classpath:server2-truststore.jks
+            password: abcdefg
+logging:
+  level:
+    root: off
