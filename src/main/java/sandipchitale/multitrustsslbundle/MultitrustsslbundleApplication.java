@@ -8,7 +8,6 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +55,7 @@ public class MultitrustsslbundleApplication {
 
 			// SslBundle representing JDK's trust store
 			// and trusts any public signed certificates signed by CA Authorities
-			trustManagers.addAll(Arrays.asList(sslBundles.getBundle(JavaTrustManagerSslBundleRegister.JAVA_CACERTS_BUNDLE_NAME)
+			trustManagers.addAll(Arrays.asList(sslBundles.getBundle("cacerts")
 					.getManagers().getTrustManagers()));
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");

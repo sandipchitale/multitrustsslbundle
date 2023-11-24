@@ -5,6 +5,11 @@ spring:
   ssl:
     bundle:
       jks:
+        cacerts:
+          truststore:
+            type: PKCS12
+            location: "${java.home}/lib/security/cacerts"
+            password: changeit
         server1:
           truststore:
             type: JKS

@@ -18,7 +18,20 @@ Make sure to add these entries to /etc/hosts :
 
 127.0.0.1 server1 server2 ...
 
-It also registers third SslBundle named `JAVA_CACERTS_BUNDLE` that wraps Java's default cacerts trust store. 
+The Java's default cacerts trust store is loaded as SslBundle named `cacerts` like this:
+
+```yaml
+spring:
+  ssl:
+    bundle:
+      jks:
+        cacerts:
+          truststore:
+            type: PKCS12
+            location: "${java.home}/lib/security/cacerts"
+            password: changeit
+```
+
 This is used to trust public API which uses signed certificate. 
 
 - https://jsonplaceholder.typicode.com/todos/1
