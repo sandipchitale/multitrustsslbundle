@@ -21,9 +21,12 @@ import javax.net.ssl.TrustManager;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 @SpringBootApplication
 public class MultitrustsslbundleApplication {
+
+	private final Random random = new Random();
 
 	@Bean
 	public CommandLineRunner server1CLR (SslBundles sslBundles,
@@ -76,7 +79,6 @@ public class MultitrustsslbundleApplication {
 			restTemplate.setRequestFactory(requestFactory);
 			// END BLOCK
 
-
 			// With RestTemplate
 			try {
 				System.out.println("Trying with RestTemplate https://server1:8081");
@@ -91,8 +93,10 @@ public class MultitrustsslbundleApplication {
 				System.out.println("Failed: " + e.getMessage());
 			}
 			try {
-				System.out.println("Trying with RestTemplate https://jsonplaceholder.typicode.com/todos/1");
-				System.out.println("Response: " + restTemplate.getForObject("https://jsonplaceholder.typicode.com/todos/1", String.class));
+				// Retrieve a random todo
+				int id = Math.abs(1+ random.nextInt(200));
+				System.out.println("Trying with RestTemplate https://jsonplaceholder.typicode.com/todos/" + id);
+				System.out.println("Response: " + restTemplate.getForObject("https://jsonplaceholder.typicode.com/todos/" + id, String.class));
 			} catch (Exception e) {
 				System.out.println("Failed: " + e.getMessage());
 			}
@@ -115,8 +119,10 @@ public class MultitrustsslbundleApplication {
 				System.out.println("Failed: " + e.getMessage());
 			}
 			try {
-				System.out.println("Trying with RestClient https://jsonplaceholder.typicode.com/todos/1");
-				System.out.println("Response: " + restClient.get().uri("https://jsonplaceholder.typicode.com/todos/1").retrieve().body(String.class));
+				// Retrieve a random todo
+				int id = Math.abs(1+ random.nextInt(200));
+				System.out.println("Trying with RestClient https://jsonplaceholder.typicode.com/todos/" + id);
+				System.out.println("Response: " + restClient.get().uri("https://jsonplaceholder.typicode.com/todos/" + id).retrieve().body(String.class));
 			} catch (Exception e) {
 				System.out.println("Failed: " + e.getMessage());
 			}
