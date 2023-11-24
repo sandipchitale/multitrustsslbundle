@@ -13,6 +13,7 @@ import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -25,8 +26,10 @@ import java.util.List;
 public class MultitrustsslbundleApplication {
 
 	@Bean
-	public CommandLineRunner server1CLR (SslBundles sslBundles, RestTemplateBuilder restTemplateBuilder) {
-	    return (args) -> {
+	public CommandLineRunner server1CLR (SslBundles sslBundles,
+										 RestTemplateBuilder restTemplateBuilder,
+										 RestClient.Builder restClientBuilder) {
+		return (args) -> {
 
 			// Note: We are using a single RestTemplate to access and trust three different servers with each
 			// having their own certificate
@@ -74,22 +77,46 @@ public class MultitrustsslbundleApplication {
 			// END BLOCK
 
 
-
+			// With RestTemplate
 			try {
-				System.out.println("Trying https://server1:8081");
+				System.out.println("Trying with RestTemplate https://server1:8081");
 				System.out.println("Response: " + restTemplate.getForObject("https://server1:8081", String.class));
 			} catch (Exception e) {
 				System.out.println("Failed: " + e.getMessage());
 			}
 			try {
-				System.out.println("Trying https://server2:8082");
+				System.out.println("Trying with RestTemplate https://server2:8082");
 				System.out.println("Response: " + restTemplate.getForObject("https://server2:8082", String.class));
 			} catch (Exception e) {
 				System.out.println("Failed: " + e.getMessage());
 			}
 			try {
-				System.out.println("Trying https://jsonplaceholder.typicode.com/todos/1");
+				System.out.println("Trying with RestTemplate https://jsonplaceholder.typicode.com/todos/1");
 				System.out.println("Response: " + restTemplate.getForObject("https://jsonplaceholder.typicode.com/todos/1", String.class));
+			} catch (Exception e) {
+				System.out.println("Failed: " + e.getMessage());
+			}
+
+			// With RestClient
+			RestClient restClient = restClientBuilder
+					.requestFactory(requestFactory)
+					.build();
+
+			try {
+				System.out.println("Trying with RestClient https://server1:8081");
+				System.out.println("Response: " + restClient.get().uri("https://server1:8081").retrieve().body(String.class));
+			} catch (Exception e) {
+				System.out.println("Failed: " + e.getMessage());
+			}
+			try {
+				System.out.println("Trying with RestClient https://server2:8082");
+				System.out.println("Response: " + restClient.get().uri("https://server2:8082").retrieve().body(String.class));
+			} catch (Exception e) {
+				System.out.println("Failed: " + e.getMessage());
+			}
+			try {
+				System.out.println("Trying with RestClient https://jsonplaceholder.typicode.com/todos/1");
+				System.out.println("Response: " + restClient.get().uri("https://jsonplaceholder.typicode.com/todos/1").retrieve().body(String.class));
 			} catch (Exception e) {
 				System.out.println("Failed: " + e.getMessage());
 			}
