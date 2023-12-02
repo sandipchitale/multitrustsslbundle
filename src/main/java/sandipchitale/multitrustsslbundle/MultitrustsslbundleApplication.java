@@ -37,10 +37,10 @@ public class MultitrustsslbundleApplication {
 			// having their own certificate
 			RestTemplate restTemplate = restTemplateBuilder.build();
 
+			// BLOCK
 			// Ideally a single composite SslBundle should do the below compositing
 			// of trust material
 			// See: https://github.com/spring-projects/spring-boot/issues/38387
-			// BLOCK
 			List<TrustManager> trustManagers = new LinkedList<>();
 
 			// SslBundle representing that wraps server1-truststore.jks
@@ -74,11 +74,10 @@ public class MultitrustsslbundleApplication {
 
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 			requestFactory.setHttpClient(closeableHttpClient);
-
-			restTemplate.setRequestFactory(requestFactory);
-			// END BLOCK
+			// BLOCK END
 
 			// With RestTemplate
+			restTemplate.setRequestFactory(requestFactory);
 			try {
 				System.out.println("Trying with RestTemplate https://server1:8081");
 				System.out.println("Response: " + restTemplate.getForObject("https://server1:8081", String.class));
