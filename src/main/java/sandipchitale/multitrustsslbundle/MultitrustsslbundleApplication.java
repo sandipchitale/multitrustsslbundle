@@ -8,7 +8,6 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,7 @@ import java.util.List;
 public class MultitrustsslbundleApplication {
 
 	@Bean
-	public CommandLineRunner server1CLR (SslBundles sslBundles,
+	public CommandLineRunner clr(SslBundles sslBundles,
 										 RestTemplateBuilder restTemplateBuilder,
 										 RestClient.Builder restClientBuilder) {
 		return (args) -> {
@@ -53,7 +52,7 @@ public class MultitrustsslbundleApplication {
 
 			// SslBundle representing JDK's trust store
 			// and trusts any public signed certificates signed by CA Authorities
-			trustManagers.addAll(Arrays.asList(sslBundles.getBundle(JavaTrustManagerSslBundleRegister.JAVA_CACERTS_BUNDLE_NAME)
+			trustManagers.addAll(Arrays.asList(sslBundles.getBundle("cacerts")
 					.getManagers().getTrustManagers()));
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -72,12 +71,11 @@ public class MultitrustsslbundleApplication {
 
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 			requestFactory.setHttpClient(closeableHttpClient);
-
-			restTemplate.setRequestFactory(requestFactory);
 			// END BLOCK
 
 
 			// With RestTemplate
+			restTemplate.setRequestFactory(requestFactory);
 			try {
 				System.out.println("Trying with RestTemplate https://server1:8081");
 				System.out.println("Response: " + restTemplate.getForObject("https://server1:8081", String.class));
